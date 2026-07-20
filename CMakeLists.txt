@@ -39,7 +39,7 @@ execute_process(
 )
 endif()
 
-if((NOT WIN32 OR BASH_VERSION_RESULT EQUAL 0) AND NOT EXISTS ${VCPKG_ROOT})
+if((NOT WIN32 OR BASH_VERSION_RESULT EQUAL 0) AND VCPKG_ROOT AND NOT EXISTS ${VCPKG_ROOT})
     message(STATUS "vcpkg will be cloned into ${VCPKG_ROOT}")
     execute_process(
         #TODO: have the same for windows ... or at least check if bash is available
