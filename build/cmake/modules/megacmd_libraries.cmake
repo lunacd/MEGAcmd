@@ -16,8 +16,8 @@ macro(load_megacmdserver_libraries)
         find_package(PkgConfig REQUIRED) # For libraries loaded using pkg-config
 
         if(USE_PCRE) #TODO: UNTESTED!
-            pkg_check_modules(pcre REQUIRED IMPORTED_TARGET libpcre)
-            target_link_libraries(LMegacmdServer PRIVATE PkgConfig::pcre)
+            pkg_check_modules(pcrecpp REQUIRED IMPORTED_TARGET libpcrecpp)
+            target_link_libraries(LMegacmdServer PRIVATE PkgConfig::pcrecpp)
             set(USE_PCRE 1)
         endif()
     endif()
