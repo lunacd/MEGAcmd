@@ -150,18 +150,13 @@ SOCKET MegaCmdShellCommunicationsPosix::createSocket(int number, bool initialize
                 freopen(std::string(pathtolog).append(".out").c_str(),"w",stdout);
                 freopen(std::string(pathtolog).append(".err").c_str(),"w",stderr);
 
-#ifndef NDEBUG
-                const char executable[] = "./mega-cmd-server";
-#else
-    #ifdef __MACH__
-                const char executable[] = "/Applications/MEGAcmd.app/Contents/MacOS/mega-cmd";
-                const char executable2[] = "./mega-cmd";
-    #else
-                const char executable[] = "mega-cmd-server";
-                char executable2[PATH_MAX];
-                sprintf(executable2, "%s/mega-cmd-server", getCurrentExecPath().c_str());
-    #endif
-#endif
+                const auto snap_dir = getenv("SNAP");
+                if (snap_dir == nullptr) {
+                    CERR << "Not running with a snap, exiting" << endl;
+                    exit(1);
+                }
+                const auto executableString = std::string(snap_dir) + "/usr/bin/mega-cmd-server";
+                const char *executable = executableString.c_str();
 
                 std::vector<const char*> argsVector{
                     executable,
@@ -175,17 +170,6 @@ SOCKET MegaCmdShellCommunicationsPosix::createSocket(int number, bool initialize
                 if (ret && errno == 2)
                 {
                     cerr << "Couln't initiate MEGAcmd server: executable not found: " << executable << endl;
-
-                #ifdef NDEBUG
-                    cerr << "Trying to use alternative executable: " << executable2 << endl;
-
-                    argsVector[0] = executable2;
-                    ret = execvp(executable2, args);
-                    if (ret && errno == 2)
-                    {
-                        cerr << "Couln't initiate MEGAcmd server: executable not found: " << executable2 << endl;
-                    }
-                #endif
                 }
 
                 if (ret && errno != 2)
